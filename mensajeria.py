@@ -17,7 +17,7 @@ def get_authentication_message(auth_socket):
 	return msg_in
 
 # verifica autenticacion del usuario
-def authentication(port, ip_auth, port_auth):
+def authentication(ip_auth, port_auth):
 	auth_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	auth_socket.connect((ip_auth, port_auth))
 	
@@ -58,5 +58,5 @@ if __name__ == '__main__':
 	ip_auth = sys.argv[2]
 	port_auth = int(sys.argv[3])
 	
-	username = authentication(port, ip_auth, port_auth)
+	username = authentication(ip_auth, port_auth)
 	
