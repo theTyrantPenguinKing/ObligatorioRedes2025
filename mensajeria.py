@@ -4,6 +4,7 @@ import hashlib
 import signal
 
 import definiciones
+import p2pnode
 
 def handle_interruption(signum, frame):
 	print('\r\nInterrupción detectada...')
@@ -60,3 +61,4 @@ if __name__ == '__main__':
 	
 	username = authentication(ip_auth, port_auth)
 	
+	p2pnode.P2PNode(port, username)

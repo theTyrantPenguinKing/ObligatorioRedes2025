@@ -30,17 +30,17 @@ class P2PNode:
 				threading.Thread(self.handle_connection(conn, addr)).start()
 			except:
 				print('Error al aceptar la conexión')
-				break
 	
 	def handle_conenection(self, conn, addr):
 		try:
-			data = conn.recv(definiciones.MAX_LARGO_BUFFER)
+			data = ''
+			while not data.endswith('\r\n'):
+				data += conn.recv(definiciones.MAX_LARGO_BUFFER)
 			self.display_message(data, addr)
 		except json.JSONDecodeError:
 			print(f"Datos inválidos recibidos de {addr}")
 		except Exception as e:
 			print(f'Error: {e}')
-			self.hosts_connected.remove(addr[0])
 		finally:
 			conn.close()
 	
@@ -55,20 +55,21 @@ class P2PNode:
 		try:
 			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 			s.connect((socket.gethostbyname(ip_address), self.port))
+			
+			msg_dict = {
+				"user" : self.username,
+				"content" : message
+			}
+			
+			msg_json = json.dumps(msg_dict)
+			msg_json += '\r\n'
+			s.send(msg_json.encode('utf-8'))
 		except Exception as e:
 			print(f'Error: {e}')
-			sys.exit()
-		
-		msg_dict = {
-			"user" : self.username,
-			"content" : message
-		}
-		s.send(json.dumps(msg_dict).encode('utf-8'))
 	
 	def user_interface():
 		while True:
 			line = input('>>> ')
-			line = line[0 : definiciones.MAX_LARGO_MENSAJE]
 			
 			msg_list = line.split()
 			
@@ -79,4 +80,6 @@ class P2PNode:
 					msg_list = msg_list[1 : len(msg_list)]
 					for i in range(len(msg_list)):
 						msg += msg_list[i]
-				self.send_message(ip_address, msg)
+					
+					msg = msg[0:definiciones.MAX_LARGO_MENSAJE]
+					self.send_message(ip_address, msg)
