@@ -38,7 +38,7 @@ class P2PNode:
 				data += conn.recv(definiciones.MAX_LARGO_BUFFER)
 			self.display_message(data, addr)
 		except json.JSONDecodeError:
-			print(f"Datos inválidos recibidos de {addr}")
+			print(f"Datos inválidos recibidos de {addr[0]}")
 		except Exception as e:
 			print(f'Error: {e}')
 		finally:
@@ -49,7 +49,7 @@ class P2PNode:
 		msg = data['content']
 		user = data['user']
 		now = time.strftime('[%Y.%m.%d %H:%M]')
-		print(now + addr[0] + user + " dice: " + msg)
+		print(now + " " + addr[0] + " " + user + " dice: " + msg)
 	
 	def send_messaje(ip_address, message):
 		try:
@@ -81,5 +81,5 @@ class P2PNode:
 					for i in range(len(msg_list)):
 						msg += msg_list[i]
 					
-					msg = msg[0:definiciones.MAX_LARGO_MENSAJE]
+					msg = msg[0 : definiciones.MAX_LARGO_MENSAJE]
 					self.send_message(ip_address, msg)
